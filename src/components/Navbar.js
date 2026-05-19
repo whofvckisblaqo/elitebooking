@@ -46,9 +46,7 @@ export default function Navbar() {
         transition: "all 0.4s ease",
         background: solid ? "rgba(0,0,0,0.97)" : "transparent",
         backdropFilter: solid ? "blur(12px)" : "none",
-        borderBottom: solid
-          ? "1px solid rgba(255,255,255,0.07)"
-          : "none",
+        borderBottom: solid ? "1px solid rgba(255,255,255,0.07)" : "none",
       }}
     >
       {/* Main bar */}
@@ -64,15 +62,7 @@ export default function Navbar() {
         }}
       >
         {/* Logo */}
-        <Link
-          href="/"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexShrink: 0,
-            textDecoration: "none",
-          }}
-        >
+        <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0, textDecoration: "none" }}>
           <Image
             src="/logo.svg"
             alt="EliteBooking"
@@ -92,10 +82,7 @@ export default function Navbar() {
                 href={link.href}
                 style={{
                   fontSize: "13px",
-                  color:
-                    pathname === link.href
-                      ? "#fff"
-                      : "rgba(255,255,255,0.6)",
+                  color: pathname === link.href ? "#fff" : "rgba(255,255,255,0.6)",
                   textDecoration: "none",
                   fontWeight: pathname === link.href ? 600 : 400,
                   transition: "color 0.2s ease",
@@ -103,9 +90,7 @@ export default function Navbar() {
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.color =
-                    pathname === link.href
-                      ? "#fff"
-                      : "rgba(255,255,255,0.6)")
+                    pathname === link.href ? "#fff" : "rgba(255,255,255,0.6)")
                 }
               >
                 {link.label}
@@ -118,11 +103,10 @@ export default function Navbar() {
                   fontSize: "13px",
                   color: "rgba(255,255,255,0.6)",
                   textDecoration: "none",
+                  transition: "color 0.2s ease",
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "rgba(255,255,255,0.6)")
-                }
+                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
               >
                 Admin
               </Link>
@@ -132,25 +116,32 @@ export default function Navbar() {
 
         {/* Desktop Auth */}
         {!isMobile && (
-          <div
-            style={{ display: "flex", alignItems: "center", gap: "20px" }}
-          >
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             {session ? (
               <>
+                <Link
+                  href="/profile"
+                  style={{
+                    fontSize: "13px",
+                    color: "rgba(255,255,255,0.6)",
+                    textDecoration: "none",
+                    transition: "color 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                >
+                  My Profile
+                </Link>
                 <Link
                   href="/dashboard"
                   style={{
                     fontSize: "13px",
                     color: "rgba(255,255,255,0.6)",
                     textDecoration: "none",
-                    transition: "color 0.2s",
+                    transition: "color 0.2s ease",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "#fff")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "rgba(255,255,255,0.6)")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   My Bookings
                 </Link>
@@ -165,15 +156,10 @@ export default function Navbar() {
                     borderRadius: "999px",
                     border: "none",
                     cursor: "pointer",
-                    transition: "all 0.2s",
+                    transition: "all 0.2s ease",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background =
-                      "rgba(255,255,255,0.88)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.background = "#fff")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.88)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
                 >
                   Sign Out
                 </button>
@@ -186,14 +172,10 @@ export default function Navbar() {
                     fontSize: "13px",
                     color: "rgba(255,255,255,0.6)",
                     textDecoration: "none",
-                    transition: "color 0.2s",
+                    transition: "color 0.2s ease",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "#fff")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "rgba(255,255,255,0.6)")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   Sign In
                 </Link>
@@ -207,15 +189,10 @@ export default function Navbar() {
                     padding: "10px 22px",
                     borderRadius: "999px",
                     textDecoration: "none",
-                    transition: "all 0.2s",
+                    transition: "all 0.2s ease",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background =
-                      "rgba(255,255,255,0.88)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.background = "#fff")
-                  }
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.88)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
                 >
                   Get Started
                 </Link>
@@ -239,40 +216,9 @@ export default function Navbar() {
               padding: "8px",
             }}
           >
-            <span
-              style={{
-                display: "block",
-                width: "24px",
-                height: "2px",
-                background: "#fff",
-                transition: "all 0.3s ease",
-                transform: menuOpen
-                  ? "rotate(45deg) translateY(7px)"
-                  : "none",
-              }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: "24px",
-                height: "2px",
-                background: "#fff",
-                transition: "all 0.3s ease",
-                opacity: menuOpen ? 0 : 1,
-              }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: "24px",
-                height: "2px",
-                background: "#fff",
-                transition: "all 0.3s ease",
-                transform: menuOpen
-                  ? "rotate(-45deg) translateY(-7px)"
-                  : "none",
-              }}
-            />
+            <span style={{ display: "block", width: "24px", height: "2px", background: "#fff", transition: "all 0.3s ease", transform: menuOpen ? "rotate(45deg) translateY(7px)" : "none" }} />
+            <span style={{ display: "block", width: "24px", height: "2px", background: "#fff", transition: "all 0.3s ease", opacity: menuOpen ? 0 : 1 }} />
+            <span style={{ display: "block", width: "24px", height: "2px", background: "#fff", transition: "all 0.3s ease", transform: menuOpen ? "rotate(-45deg) translateY(-7px)" : "none" }} />
           </button>
         )}
       </div>
@@ -283,19 +229,12 @@ export default function Navbar() {
           style={{
             overflow: "hidden",
             transition: "max-height 0.4s ease",
-            maxHeight: menuOpen ? "600px" : "0",
+            maxHeight: menuOpen ? "700px" : "0",
             background: "rgba(0,0,0,0.97)",
             backdropFilter: "blur(12px)",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "24px",
-              padding: "24px 24px 32px",
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px", padding: "24px 24px 32px" }}>
             {navLinks.map((link) => (
               <Link
                 key={link.label}
@@ -303,10 +242,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 style={{
                   fontSize: "15px",
-                  color:
-                    pathname === link.href
-                      ? "#fff"
-                      : "rgba(255,255,255,0.6)",
+                  color: pathname === link.href ? "#fff" : "rgba(255,255,255,0.6)",
                   textDecoration: "none",
                   fontWeight: pathname === link.href ? 600 : 400,
                 }}
@@ -319,43 +255,31 @@ export default function Navbar() {
               <Link
                 href="/admin"
                 onClick={() => setMenuOpen(false)}
-                style={{
-                  fontSize: "15px",
-                  color: "rgba(255,255,255,0.6)",
-                  textDecoration: "none",
-                }}
+                style={{ fontSize: "15px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
               >
                 Admin
               </Link>
             )}
 
-            <div
-              style={{
-                borderTop: "1px solid rgba(255,255,255,0.08)",
-                paddingTop: "24px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "16px",
-              }}
-            >
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
               {session ? (
                 <>
                   <Link
+                    href="/profile"
+                    onClick={() => setMenuOpen(false)}
+                    style={{ fontSize: "15px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
+                  >
+                    My Profile
+                  </Link>
+                  <Link
                     href="/dashboard"
                     onClick={() => setMenuOpen(false)}
-                    style={{
-                      fontSize: "15px",
-                      color: "rgba(255,255,255,0.6)",
-                      textDecoration: "none",
-                    }}
+                    style={{ fontSize: "15px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   >
                     My Bookings
                   </Link>
                   <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      signOut({ callbackUrl: "/" });
-                    }}
+                    onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/" }); }}
                     style={{
                       fontSize: "15px",
                       fontWeight: 700,
@@ -376,11 +300,7 @@ export default function Navbar() {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    style={{
-                      fontSize: "15px",
-                      color: "rgba(255,255,255,0.6)",
-                      textDecoration: "none",
-                    }}
+                    style={{ fontSize: "15px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   >
                     Sign In
                   </Link>
