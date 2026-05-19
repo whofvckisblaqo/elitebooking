@@ -1,62 +1,55 @@
 "use client";
 import Link from "next/link";
-
-
+import Image from "next/image";
 
 const executives = [
   {
     name: "James A. Crawford",
     title: "Chief Executive Officer",
     initials: "JC",
+    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
     bio: "James brings over 15 years of experience in the entertainment and events industry. Previously VP of Talent Acquisition at Global Events Group, he founded EliteBooking with a vision to democratize access to world-class celebrity talent for events of all sizes.",
     expertise: ["Business Strategy", "Celebrity Relations", "Global Partnerships"],
-    linkedin: "#",
-    twitter: "#",
   },
   {
     name: "Sarah M. Elliott",
     title: "Chief Legal Officer",
     initials: "SE",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
     bio: "Sarah is a seasoned entertainment lawyer with expertise in talent contracts, intellectual property, and international commerce law. She ensures EliteBooking operates with full legal compliance across all 50+ countries we serve.",
     expertise: ["Entertainment Law", "Contract Negotiation", "Compliance"],
-    linkedin: "#",
-    twitter: "#",
   },
   {
     name: "Marcus T. Williams",
     title: "Chief Technology Officer",
     initials: "MW",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
     bio: "Marcus is a full-stack engineer and product leader with a background in building scalable platforms for the entertainment industry. He leads EliteBooking's technology vision, ensuring a seamless and secure experience for all users.",
     expertise: ["Platform Architecture", "Security", "Product Development"],
-    linkedin: "#",
-    twitter: "#",
   },
   {
     name: "Priya R. Sharma",
     title: "Chief Operations Officer",
     initials: "PS",
+    photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
     bio: "Priya oversees the day-to-day operations of EliteBooking, managing relationships with celebrity representatives and ensuring every booking is executed flawlessly. She has a background in luxury event management across Asia and Europe.",
     expertise: ["Operations Management", "Event Logistics", "Client Relations"],
-    linkedin: "#",
-    twitter: "#",
   },
   {
     name: "David O. Chen",
     title: "Head of Celebrity Relations",
     initials: "DC",
+    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
     bio: "David manages EliteBooking's growing roster of celebrities, working directly with agents, managers, and publicists worldwide. His deep network in the entertainment industry ensures we always have access to the most sought-after talent.",
     expertise: ["Talent Management", "Agent Relations", "Contract Negotiation"],
-    linkedin: "#",
-    twitter: "#",
   },
   {
     name: "Amara N. Osei",
     title: "Head of Client Success",
     initials: "AO",
+    photo: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80",
     bio: "Amara leads our client success team, ensuring every client from first inquiry to post-event follow-up has an exceptional experience. She has worked with Fortune 500 companies and high-profile private clients across 30+ countries.",
     expertise: ["Client Experience", "Event Planning", "VIP Services"],
-    linkedin: "#",
-    twitter: "#",
   },
 ];
 
@@ -103,40 +96,21 @@ export default function ExecutivesPage() {
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
-              {/* Top section */}
-              <div
-                style={{
-                  background: "#000",
-                  padding: "32px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "20px",
-                }}
-              >
-                {/* Avatar */}
-                <div
-                  style={{
-                    width: "72px",
-                    height: "72px",
-                    borderRadius: "50%",
-                    border: "2px solid rgba(255,255,255,0.2)",
-                    background: "rgba(255,255,255,0.08)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  <span style={{ fontSize: "22px", fontWeight: 800, color: "#fff" }}>
-                    {exec.initials}
-                  </span>
-                </div>
-
-                <div>
-                  <p style={{ fontSize: "18px", fontWeight: 800, color: "#fff", marginBottom: "4px" }}>
+              {/* Photo */}
+              <div style={{ position: "relative", height: "260px", background: "#f5f5f5", overflow: "hidden" }}>
+                <Image
+                  src={exec.photo}
+                  alt={exec.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{ objectFit: "cover", objectPosition: "top" }}
+                />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)" }} />
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px" }}>
+                  <p style={{ fontSize: "18px", fontWeight: 800, color: "#fff", marginBottom: "2px" }}>
                     {exec.name}
                   </p>
-                  <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>
+                  <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>
                     {exec.title}
                   </p>
                 </div>
@@ -149,7 +123,7 @@ export default function ExecutivesPage() {
                 </p>
 
                 {/* Expertise */}
-                <div style={{ marginBottom: "20px" }}>
+                <div>
                   <p style={{ fontSize: "11px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "10px" }}>
                     Areas of Expertise
                   </p>
@@ -172,21 +146,13 @@ export default function ExecutivesPage() {
                     ))}
                   </div>
                 </div>
-
               </div>
             </div>
           ))}
         </div>
 
         {/* Company values */}
-        <div
-          style={{
-            background: "#000",
-            borderRadius: "24px",
-            padding: "48px",
-            marginBottom: "40px",
-          }}
-        >
+        <div style={{ background: "#000", borderRadius: "24px", padding: "48px", marginBottom: "40px" }}>
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <p style={{ fontSize: "11px", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "12px" }}>
               Our Foundation
@@ -213,17 +179,7 @@ export default function ExecutivesPage() {
         </div>
 
         {/* Bottom links */}
-        <div
-          style={{
-            paddingTop: "32px",
-            borderTop: "1px solid #eee",
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "16px",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
+        <div style={{ paddingTop: "32px", borderTop: "1px solid #eee", display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between" }}>
           <p style={{ fontSize: "13px", color: "#999" }}>
             Want to work with us?{" "}
             <Link href="/contact" style={{ color: "#000", fontWeight: 600, textDecoration: "none" }}>
