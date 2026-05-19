@@ -1,8 +1,7 @@
+"use client";
 import Link from "next/link";
 
-export const metadata = {
-  title: "Certificate of Operation — EliteBooking",
-};
+
 
 const certNumber = "EB-2024-LIC-" + "78542369".match(/.{1,4}/g).join("-");
 const issueDate = "January 15, 2024";

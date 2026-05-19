@@ -1,8 +1,7 @@
+"Use client";
 import Link from "next/link";
 
-export const metadata = {
-  title: "Executive Team — EliteBooking",
-};
+
 
 const executives = [
   {
