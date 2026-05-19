@@ -10,6 +10,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [deleting, setDeleting] = useState(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -29,6 +30,21 @@ export default function AdminUsersPage() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure you want to delete this user? This will also delete all their bookings and reviews.")) return;
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setUsers((prev) => prev.filter((u) => u._id !== id));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -60,7 +76,10 @@ export default function AdminUsersPage() {
               Users ({users.length})
             </h1>
           </div>
-          <Link href="/admin" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none", padding: "12px 24px", borderRadius: "999px", border: "1px solid rgba(255,255,255,0.1)" }}>
+          <Link
+            href="/admin"
+            style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none", padding: "12px 24px", borderRadius: "999px", border: "1px solid rgba(255,255,255,0.1)" }}
+          >
             ← Dashboard
           </Link>
         </div>
@@ -69,9 +88,7 @@ export default function AdminUsersPage() {
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 24px" }}>
 
         {/* Search */}
-        <div
-          style={{ display: "flex", alignItems: "center", gap: "12px", background: "#fff", border: "1px solid #eee", borderRadius: "12px", padding: "0 16px", marginBottom: "24px" }}
-        >
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#fff", border: "1px solid #eee", borderRadius: "12px", padding: "0 16px", marginBottom: "24px" }}>
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#ccc">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -84,7 +101,7 @@ export default function AdminUsersPage() {
           />
         </div>
 
-        {/* Users Table */}
+        {/* Users */}
         {filtered.length === 0 ? (
           <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: "16px", padding: "80px 24px", textAlign: "center" }}>
             <p style={{ fontSize: "18px", fontWeight: 700, color: "#000", marginBottom: "8px" }}>No users found</p>
@@ -95,50 +112,75 @@ export default function AdminUsersPage() {
             {filtered.map((user) => (
               <div
                 key={user._id}
-                style={{ background: "#fff", border: "1px solid #eee", borderRadius: "16px", padding: "20px 24px", display: "grid", gridTemplateColumns: "1fr auto", gap: "20px", alignItems: "center" }}
+                style={{ background: "#fff", border: "1px solid #eee", borderRadius: "16px", padding: "20px 24px" }}
               >
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "24px", alignItems: "center" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "20px" }}>
 
-                  {/* Avatar + Name */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                    <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <span style={{ fontSize: "16px", fontWeight: 800, color: "#fff" }}>
-                        {user.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <p style={{ fontSize: "15px", fontWeight: 700, color: "#000", marginBottom: "2px" }}>{user.name}</p>
-                      <p style={{ fontSize: "13px", color: "#999" }}>{user.email}</p>
-                    </div>
-                  </div>
+                  {/* Left — Avatar + Info */}
+                  <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "20px" }}>
 
-                  {/* Details */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
-                    {[
-                      { label: "Phone", value: user.phone || "N/A" },
-                      { label: "Country", value: user.country || "N/A" },
-                      { label: "Joined", value: new Date(user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) },
-                    ].map((item) => (
-                      <div key={item.label} style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "10px", padding: "8px 14px" }}>
-                        <p style={{ fontSize: "10px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>{item.label}</p>
-                        <p style={{ fontSize: "13px", fontWeight: 600, color: "#000" }}>{item.value}</p>
+                    {/* Avatar */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                      <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span style={{ fontSize: "16px", fontWeight: 800, color: "#fff" }}>
+                          {user.name.charAt(0).toUpperCase()}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      <div>
+                        <p style={{ fontSize: "15px", fontWeight: 700, color: "#000", marginBottom: "2px" }}>{user.name}</p>
+                        <p style={{ fontSize: "13px", color: "#999" }}>{user.email}</p>
+                      </div>
+                    </div>
 
-                {/* Booking stats */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px", flexShrink: 0 }}>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <div style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "10px", padding: "8px 14px", textAlign: "center" }}>
-                      <p style={{ fontSize: "18px", fontWeight: 800, color: "#000", lineHeight: 1 }}>{user.bookingCount}</p>
-                      <p style={{ fontSize: "10px", color: "#bbb", marginTop: "3px" }}>Bookings</p>
-                    </div>
-                    <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: "10px", padding: "8px 14px", textAlign: "center" }}>
-                      <p style={{ fontSize: "18px", fontWeight: 800, color: "#22c55e", lineHeight: 1 }}>{user.approvedCount}</p>
-                      <p style={{ fontSize: "10px", color: "#22c55e", marginTop: "3px" }}>Approved</p>
+                    {/* Details */}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                      {[
+                        { label: "Phone", value: user.phone || "N/A" },
+                        { label: "Country", value: user.country || "N/A" },
+                        { label: "Joined", value: new Date(user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) },
+                      ].map((item) => (
+                        <div key={item.label} style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "10px", padding: "8px 14px" }}>
+                          <p style={{ fontSize: "10px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "2px" }}>{item.label}</p>
+                          <p style={{ fontSize: "13px", fontWeight: 600, color: "#000" }}>{item.value}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
+
+                  {/* Right — Stats + Delete */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <div style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "10px", padding: "8px 14px", textAlign: "center" }}>
+                        <p style={{ fontSize: "18px", fontWeight: 800, color: "#000", lineHeight: 1 }}>{user.bookingCount}</p>
+                        <p style={{ fontSize: "10px", color: "#bbb", marginTop: "3px" }}>Bookings</p>
+                      </div>
+                      <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: "10px", padding: "8px 14px", textAlign: "center" }}>
+                        <p style={{ fontSize: "18px", fontWeight: 800, color: "#22c55e", lineHeight: 1 }}>{user.approvedCount}</p>
+                        <p style={{ fontSize: "10px", color: "#22c55e", marginTop: "3px" }}>Approved</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleDelete(user._id)}
+                      disabled={deleting === user._id}
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        color: "#ff3b30",
+                        background: "rgba(255,59,48,0.08)",
+                        border: "1px solid rgba(255,59,48,0.15)",
+                        padding: "10px 18px",
+                        borderRadius: "999px",
+                        cursor: deleting === user._id ? "not-allowed" : "pointer",
+                        opacity: deleting === user._id ? 0.6 : 1,
+                        transition: "all 0.2s ease",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {deleting === user._id ? "Deleting..." : "Delete User"}
+                    </button>
+                  </div>
+
                 </div>
               </div>
             ))}
