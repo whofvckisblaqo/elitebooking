@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import RelatedCelebrities from "@/components/RelatedCelebrities";
 
 export default function CelebrityProfilePage() {
   const { slug } = useParams();
@@ -71,8 +72,8 @@ export default function CelebrityProfilePage() {
       if (!res.ok) {
         setError(data.error);
       } else {
-  router.push("/booking-success");
-}
+        router.push("/booking-success");
+      }
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -171,14 +172,14 @@ export default function CelebrityProfilePage() {
                 <span style={{ fontSize: "11px", fontWeight: 700, color: "#000", background: "#fff", padding: "4px 14px", borderRadius: "999px" }}>
                   {celebrity.category}
                 </span>
-               {celebrity.verified && (
-  <span title="Verified Celebrity" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="11" cy="11" r="11" fill="#1D9BF0" />
-      <path d="M6.5 11.5L9.5 14.5L15.5 8.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  </span>
-)}
+                {celebrity.verified && (
+                  <span title="Verified Celebrity" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                      <circle cx="11" cy="11" r="11" fill="#1D9BF0" />
+                      <path d="M6.5 11.5L9.5 14.5L15.5 8.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                )}
                 {celebrity.featured && (
                   <span style={{ fontSize: "11px", fontWeight: 700, padding: "4px 14px", borderRadius: "999px", background: "rgba(234,179,8,0.2)", color: "#fbbf24", border: "1px solid rgba(234,179,8,0.3)" }}>
                     ⭐ Featured
@@ -255,48 +256,28 @@ export default function CelebrityProfilePage() {
                   ))}
                 </div>
 
-                {/* Social Media — no .map() */}
+                {/* Social Media */}
                 {(sm.instagram || sm.twitter || sm.youtube || sm.tiktok) && (
                   <div>
                     <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#000", marginBottom: "16px" }}>Social Media</h3>
                     <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
                       {sm.instagram && (
-                        <a
-                          href={`https://instagram.com/${sm.instagram.replace("@", "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={linkStyle}
-                        >
+                        <a href={`https://instagram.com/${sm.instagram.replace("@", "")}`} target="_blank" rel="noopener noreferrer" style={linkStyle}>
                           📸 Instagram
                         </a>
                       )}
                       {sm.twitter && (
-                        <a
-                          href={`https://twitter.com/${sm.twitter.replace("@", "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={linkStyle}
-                        >
+                        <a href={`https://twitter.com/${sm.twitter.replace("@", "")}`} target="_blank" rel="noopener noreferrer" style={linkStyle}>
                           🐦 Twitter
                         </a>
                       )}
                       {sm.youtube && (
-                        <a
-                          href={sm.youtube.startsWith("http") ? sm.youtube : `https://youtube.com/${sm.youtube}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={linkStyle}
-                        >
+                        <a href={sm.youtube.startsWith("http") ? sm.youtube : `https://youtube.com/${sm.youtube}`} target="_blank" rel="noopener noreferrer" style={linkStyle}>
                           ▶️ YouTube
                         </a>
                       )}
                       {sm.tiktok && (
-                        <a
-                          href={`https://tiktok.com/${sm.tiktok.replace("@", "")}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={linkStyle}
-                        >
+                        <a href={`https://tiktok.com/${sm.tiktok.replace("@", "")}`} target="_blank" rel="noopener noreferrer" style={linkStyle}>
                           🎵 TikTok
                         </a>
                       )}
@@ -527,6 +508,12 @@ export default function CelebrityProfilePage() {
 
         </div>
       </div>
+
+      {/* Related Celebrities */}
+      <RelatedCelebrities
+        category={celebrity.category}
+        currentSlug={celebrity.slug}
+      />
 
       <style>{`
         @media (max-width: 768px) {
