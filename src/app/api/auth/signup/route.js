@@ -15,17 +15,26 @@ export async function POST(req) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
 
-    const existing = await User.findOne({ email });
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const existing = await User.findOne({ email: normalizedEmail });
     if (existing) {
       return NextResponse.json({ error: "Email already in use" }, { status: 400 });
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    await User.create({ name, email, password: hashed, phone, country });
+    const user = await User.create({
+      name,
+      email: normalizedEmail,
+      password: hashed,
+      phone,
+      country,
+    });
 
     await resend.emails.send({
-      from: "EliteBooking <onboarding@resend.dev>",
-      to: email,
+      from: process.env.FROM_EMAIL || "EliteBooking <onboarding@resend.dev>",
+      to: normalizedEmail,
+      replyTo: process.env.SUPPORT_EMAIL,
       subject: "Welcome to EliteBooking",
       html: `
         <div style="font-family:Inter,sans-serif;max-width:600px;margin:0 auto;background:#000;color:#fff;padding:48px 32px;border-radius:16px;">

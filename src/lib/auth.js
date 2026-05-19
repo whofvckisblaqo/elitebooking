@@ -14,8 +14,9 @@ export const authOptions = {
       },
       async authorize(credentials) {
         await connectDB();
-        const user = await User.findOne({ email: credentials.email });
-        if (!user) throw new Error("No user found with this email");
+
+        const user = await User.findOne({ email: credentials.email.toLowerCase().trim() });
+        if (!user) throw new Error("No account found with this email");
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) throw new Error("Invalid password");
@@ -50,7 +51,7 @@ export const authOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 8 * 60 * 60, // 8 hours
+    maxAge: 8 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
