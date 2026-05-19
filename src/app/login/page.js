@@ -128,7 +128,7 @@ export default function LoginPage() {
                 >
                   <label style={{ ...labelStyle, marginBottom: 0 }}>Password</label>
                   <Link
-                    href="#"
+                    href="/forgot-password"
                     style={{
                       fontSize: "12px",
                       color: "rgba(255,255,255,0.4)",
@@ -232,11 +232,11 @@ export default function LoginPage() {
           }}
         >
           By signing in you agree to our{" "}
-          <Link href="#" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>
+          <Link href="/terms" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>
             Terms
           </Link>{" "}
           &{" "}
-          <Link href="#" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>
+          <Link href="/privacy" style={{ color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>
             Privacy Policy
           </Link>
         </p>
