@@ -11,9 +11,62 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "EliteBooking — Book World-Class Celebrities",
+  title: {
+    default: "EliteBooking — Book World-Class Celebrities",
+    template: "%s | EliteBooking",
+  },
   description:
-    "The premium platform connecting you with the world's finest talent for your events.",
+    "The premium platform connecting you with the world's finest celebrities for your events. Book musicians, athletes, actors, comedians and more.",
+  keywords: [
+    "celebrity booking",
+    "book a celebrity",
+    "celebrity appearances",
+    "hire a celebrity",
+    "celebrity events",
+    "book musicians",
+    "book athletes",
+    "celebrity management",
+    "EliteBooking",
+  ],
+  authors: [{ name: "EliteBooking" }],
+  creator: "EliteBooking",
+  publisher: "EliteBooking",
+  metadataBase: new URL("https://elitebookingweb.xyz"),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://elitebookingweb.xyz",
+    siteName: "EliteBooking",
+    title: "EliteBooking — Book World-Class Celebrities",
+    description:
+      "The premium platform connecting you with the world's finest celebrities for your events.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "EliteBooking — Book World-Class Celebrities",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EliteBooking — Book World-Class Celebrities",
+    description:
+      "The premium platform connecting you with the world's finest celebrities for your events.",
+    images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
