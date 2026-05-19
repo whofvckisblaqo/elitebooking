@@ -5,6 +5,7 @@ import connectDB from "@/lib/mongodb";
 import Celebrity from "@/models/Celebrity";
 import Booking from "@/models/Booking";
 import User from "@/models/User";
+import Review from "@/models/Review";
 
 export async function GET() {
   try {
@@ -15,18 +16,33 @@ export async function GET() {
 
     await connectDB();
 
-    const [totalCelebrities, totalBookings, pendingBookings, totalUsers, recentBookings] =
-      await Promise.all([
-        Celebrity.countDocuments(),
-        Booking.countDocuments(),
-        Booking.countDocuments({ status: "PENDING" }),
-        User.countDocuments({ role: "USER" }),
-        Booking.find()
-          .populate("userId", "name email")
-          .populate("celebrityId", "name")
-          .sort({ createdAt: -1 })
-          .limit(5),
-      ]);
+    const [
+      totalCelebrities,
+      totalBookings,
+      pendingBookings,
+      approvedBookings,
+      rejectedBookings,
+      totalUsers,
+      totalReviews,
+      featuredCelebrities,
+      availableCelebrities,
+      recentBookings,
+    ] = await Promise.all([
+      Celebrity.countDocuments(),
+      Booking.countDocuments(),
+      Booking.countDocuments({ status: "PENDING" }),
+      Booking.countDocuments({ status: "APPROVED" }),
+      Booking.countDocuments({ status: "REJECTED" }),
+      User.countDocuments({ role: "USER" }),
+      Review.countDocuments(),
+      Celebrity.countDocuments({ featured: true }),
+      Celebrity.countDocuments({ available: true }),
+      Booking.find()
+        .populate("userId", "name email")
+        .populate("celebrityId", "name image category")
+        .sort({ createdAt: -1 })
+        .limit(5),
+    ]);
 
     const formatted = recentBookings.map((b) => ({
       _id: b._id,
@@ -39,7 +55,17 @@ export async function GET() {
     }));
 
     return NextResponse.json({
-      stats: { totalCelebrities, totalBookings, pendingBookings, totalUsers },
+      stats: {
+        totalCelebrities,
+        totalBookings,
+        pendingBookings,
+        approvedBookings,
+        rejectedBookings,
+        totalUsers,
+        totalReviews,
+        featuredCelebrities,
+        availableCelebrities,
+      },
       recentBookings: formatted,
     });
   } catch (error) {
