@@ -12,21 +12,16 @@ export default function CelebrityProfilePage() {
   const { data: session } = useSession();
 
   const [celebrity, setCelebrity] = useState(null);
-  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("about");
   const [selectedPackage, setSelectedPackage] = useState("");
   const [bookingForm, setBookingForm] = useState({ eventDate: "", message: "" });
-  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
   const [bookingLoading, setBookingLoading] = useState(false);
-  const [reviewLoading, setReviewLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [reviewSuccess, setReviewSuccess] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchCelebrity();
-    fetchReviews();
   }, [slug]);
 
   const fetchCelebrity = async () => {
@@ -38,16 +33,6 @@ export default function CelebrityProfilePage() {
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchReviews = async () => {
-    try {
-      const res = await fetch(`/api/reviews/${slug}`);
-      const data = await res.json();
-      setReviews(data.reviews || []);
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -81,38 +66,11 @@ export default function CelebrityProfilePage() {
     }
   };
 
-  const handleReview = async (e) => {
-    e.preventDefault();
-    if (!session) return router.push("/login");
-    setReviewLoading(true);
-    try {
-      const res = await fetch("/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ celebrityId: celebrity._id, ...reviewForm }),
-      });
-      if (res.ok) {
-        setReviewSuccess(true);
-        setReviewForm({ rating: 5, comment: "" });
-        fetchReviews();
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setReviewLoading(false);
-    }
-  };
-
   const getPackageFee = (pkg) => {
     if (!celebrity?.packageFees) return null;
     const fee = celebrity.packageFees[pkg];
     return fee ? `$${Number(fee).toLocaleString()}` : null;
   };
-
-  const avgRating =
-    reviews.length > 0
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-      : null;
 
   if (loading) {
     return (
@@ -168,6 +126,7 @@ export default function CelebrityProfilePage() {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "32px 24px" }}>
           <div style={{ maxWidth: "1100px", margin: "0 auto", display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "16px" }}>
             <div>
+              {/* Badges */}
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", flexWrap: "wrap" }}>
                 <span style={{ fontSize: "11px", fontWeight: 700, color: "#000", background: "#fff", padding: "4px 14px", borderRadius: "999px" }}>
                   {celebrity.category}
@@ -199,9 +158,6 @@ export default function CelebrityProfilePage() {
                 {celebrity.nationality && (
                   <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>🌍 {celebrity.nationality}</span>
                 )}
-                {avgRating && (
-                  <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>⭐ {avgRating} ({reviews.length} reviews)</span>
-                )}
               </div>
             </div>
 
@@ -223,13 +179,13 @@ export default function CelebrityProfilePage() {
           <div>
             {/* Tabs */}
             <div style={{ display: "flex", borderBottom: "1px solid #eee", marginBottom: "32px" }}>
-              {["about", "packages", "reviews"].map((t) => (
+              {["about", "packages"].map((t) => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
                   style={{ padding: "12px 20px", fontSize: "14px", fontWeight: 600, cursor: "pointer", border: "none", background: "none", color: tab === t ? "#000" : "#999", borderBottom: tab === t ? "2px solid #000" : "2px solid transparent", marginBottom: "-1px", textTransform: "capitalize", transition: "all 0.2s ease" }}
                 >
-                  {t === "reviews" ? `Reviews (${reviews.length})` : t === "packages" ? `Packages (${celebrity.packages?.length || 0})` : "About"}
+                  {t === "packages" ? `Packages (${celebrity.packages?.length || 0})` : "About"}
                 </button>
               ))}
             </div>
@@ -320,75 +276,6 @@ export default function CelebrityProfilePage() {
                         </div>
                       );
                     })}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* REVIEWS */}
-            {tab === "reviews" && (
-              <div>
-                {reviews.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "48px 24px", background: "#f9f9f9", borderRadius: "16px", border: "1px solid #eee" }}>
-                    <p style={{ fontSize: "16px", fontWeight: 700, color: "#000", marginBottom: "8px" }}>No reviews yet</p>
-                    <p style={{ fontSize: "14px", color: "#999" }}>Be the first to leave a review</p>
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                    {reviews.map((review) => (
-                      <div key={review._id} style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "14px", padding: "20px 24px" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
-                          <div>
-                            <p style={{ fontSize: "14px", fontWeight: 700, color: "#000" }}>{review.user?.name || "Anonymous"}</p>
-                            <p style={{ fontSize: "12px", color: "#bbb", marginTop: "2px" }}>
-                              {new Date(review.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                            </p>
-                          </div>
-                          <div style={{ display: "flex", gap: "3px" }}>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <span key={star} style={{ fontSize: "16px", color: star <= review.rating ? "#000" : "#ddd" }}>★</span>
-                            ))}
-                          </div>
-                        </div>
-                        <p style={{ fontSize: "14px", color: "#555", lineHeight: 1.7 }}>{review.comment}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {session && (
-                  <div style={{ marginTop: "32px", background: "#000", borderRadius: "16px", padding: "28px" }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#fff", marginBottom: "20px" }}>Leave a Review</h3>
-                    {reviewSuccess ? (
-                      <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.6)" }}>✅ Review submitted!</p>
-                    ) : (
-                      <form onSubmit={handleReview}>
-                        <div style={{ marginBottom: "16px" }}>
-                          <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.5)", marginBottom: "10px", letterSpacing: "0.1em", textTransform: "uppercase" }}>Rating</label>
-                          <div style={{ display: "flex", gap: "8px" }}>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <button key={star} type="button" onClick={() => setReviewForm({ ...reviewForm, rating: star })} style={{ fontSize: "24px", color: star <= reviewForm.rating ? "#fff" : "rgba(255,255,255,0.2)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                                ★
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                        <div style={{ marginBottom: "20px" }}>
-                          <label style={{ display: "block", fontSize: "11px", fontWeight: 600, color: "rgba(255,255,255,0.5)", marginBottom: "8px", letterSpacing: "0.1em", textTransform: "uppercase" }}>Your Review</label>
-                          <textarea
-                            value={reviewForm.comment}
-                            onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                            required
-                            rows={4}
-                            placeholder="Share your experience..."
-                            style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "14px 16px", fontSize: "14px", color: "#fff", outline: "none", resize: "vertical" }}
-                          />
-                        </div>
-                        <button type="submit" disabled={reviewLoading} style={{ background: "#fff", color: "#000", fontWeight: 700, fontSize: "14px", padding: "14px 32px", borderRadius: "999px", border: "none", cursor: reviewLoading ? "not-allowed" : "pointer", opacity: reviewLoading ? 0.6 : 1 }}>
-                          {reviewLoading ? "Submitting..." : "Submit Review"}
-                        </button>
-                      </form>
-                    )}
                   </div>
                 )}
               </div>
