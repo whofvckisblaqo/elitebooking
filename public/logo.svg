@@ -1,0 +1,26 @@
+<svg width="100%" viewBox="0 0 680 200" role="img" xmlns="http://www.w3.org/2000/svg" style="">
+  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">EliteBooking Logo V2</title>
+  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">EliteBooking logo with a diamond E monogram and sleek modern wordmark</desc>
+
+  <!-- Diamond shape background for E monogram -->
+  <g transform="translate(230, 30)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+    <!-- Outer diamond -->
+    <polygon points="55,0 110,55 55,110 0,55" fill="#111111" stroke="#C9A84C" stroke-width="2" style="fill:rgb(17, 17, 17);stroke:rgb(201, 168, 76);color:rgb(255, 255, 255);stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+    <!-- Inner diamond accent -->
+    <polygon points="55,12 98,55 55,98 12,55" fill="none" stroke="#C9A84C" stroke-width="0.8" opacity="0.4" style="fill:none;stroke:rgb(201, 168, 76);color:rgb(255, 255, 255);stroke-width:0.8px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+    <!-- E letterform inside diamond -->
+    <text x="55" y="72" text-anchor="middle" font-family="Georgia, serif" font-size="52" font-weight="700" fill="#C9A84C" letter-spacing="-2" style="fill:rgb(201, 168, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:52px;font-weight:700;text-anchor:middle;dominant-baseline:auto">E</text>
+  </g>
+
+  <!-- Wordmark to the right of icon -->
+  <text x="370" y="75" text-anchor="start" font-family="Georgia, serif" font-size="36" font-weight="700" letter-spacing="3" fill="var(--color-text-primary)" style="fill:rgb(250, 249, 245);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:36px;font-weight:700;text-anchor:start;dominant-baseline:auto">ELITE</text>
+
+  <!-- Thin gold divider line -->
+  <rect x="370" y="88" width="200" height="1" rx="0.5" fill="#C9A84C" opacity="0.6" style="fill:rgb(201, 168, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.6;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <text x="371" y="110" text-anchor="start" font-family="Georgia, serif" font-size="13" font-weight="400" letter-spacing="9" fill="#C9A84C" style="fill:rgb(201, 168, 76);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:13px;font-weight:400;text-anchor:start;dominant-baseline:auto">BOOKING</text>
+
+  <!-- Tagline -->
+  <text x="371" y="132" text-anchor="start" font-family="Georgia, serif" font-size="10" font-weight="400" letter-spacing="2" fill="var(--color-text-secondary)" font-style="italic" style="fill:rgb(194, 192, 182);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:10px;font-weight:400;font-style:italic;text-anchor:start;dominant-baseline:auto">Book the world's finest talent</text>
+
+</svg>
