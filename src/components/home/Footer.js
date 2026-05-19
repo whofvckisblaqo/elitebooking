@@ -6,10 +6,11 @@ const links = [
   { label: "Categories", href: "/#categories" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Contact", href: "/contact" },
+  { label: "Our Team", href: "/executives" },
+  { label: "Certificate", href: "/certificate" },
   { label: "Sign In", href: "/login" },
   { label: "Sign Up", href: "/signup" },
 ];
-
 export default function Footer() {
   return (
     <footer
