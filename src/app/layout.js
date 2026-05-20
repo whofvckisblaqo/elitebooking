@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import NextAuthProvider from "@/components/SessionProvider";
 import Smartsupp from "@/components/Smartsupp";
+import GoogleTranslate from "@/components/GoogleTranslate";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -72,11 +73,24 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" style={{ overflowX: "hidden" }}>
+      <head>
+        <style>{`
+          .goog-te-banner-frame { display: none !important; }
+          .skiptranslate { display: none !important; }
+          body { top: 0 !important; }
+          .goog-tooltip { display: none !important; }
+          .goog-text-highlight {
+            background-color: transparent !important;
+            box-shadow: none !important;
+          }
+        `}</style>
+      </head>
       <body className={inter.className} style={{ overflowX: "hidden" }}>
         <NextAuthProvider>
           <Navbar />
           {children}
           <Smartsupp />
+          <GoogleTranslate />
         </NextAuthProvider>
       </body>
     </html>
