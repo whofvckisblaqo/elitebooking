@@ -76,21 +76,18 @@ export default function Navbar() {
   }, []);
 
   const changeLanguage = (code, label) => {
-    if (code === "en") {
-      const cookies = document.cookie.split(";");
-      for (let cookie of cookies) {
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-      }
-      window.location.reload();
-    } else {
-      window.location.href = `https://translate.google.com/translate?sl=en&tl=${code}&u=${encodeURIComponent(window.location.href)}`;
-    }
-    setCurrentLang(code === "en" ? "EN" : code.toUpperCase().substring(0, 2));
-    setLangOpen(false);
-    setMobileLangOpen(false);
-  };
+  if (code === "en") {
+    window.location.reload();
+  } else {
+    window.open(
+      `https://translate.google.com/translate?sl=en&tl=${code}&u=${encodeURIComponent(window.location.href)}`,
+      "_blank"
+    );
+  }
+  setCurrentLang(code === "en" ? "EN" : code.toUpperCase().substring(0, 2));
+  setLangOpen(false);
+  setMobileLangOpen(false);
+};
 
   const navLinks = [
     { label: "Celebrities", href: "/celebrities" },
