@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
@@ -43,7 +43,9 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("EN");
+  const langRef = useRef(null);
   const { data: session } = useSession();
   const pathname = usePathname();
 
@@ -65,20 +67,28 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (!e.target.closest("#lang-dropdown")) setLangOpen(false);
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setLangOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const changeLanguage = (code, label) => {
-    const select = document.querySelector(".goog-te-combo");
-    if (select) {
-      select.value = code;
-      select.dispatchEvent(new Event("change"));
-    }
-    setCurrentLang(label.split(" ")[0].substring(0, 2).toUpperCase());
-    setLangOpen(false);
+    const tryChange = (attempts = 0) => {
+      const select = document.querySelector(".goog-te-combo");
+      if (select) {
+        select.value = code;
+        select.dispatchEvent(new Event("change"));
+        setCurrentLang(code === "en" ? "EN" : label.substring(0, 3).toUpperCase());
+        setLangOpen(false);
+        setMobileLangOpen(false);
+      } else if (attempts < 10) {
+        setTimeout(() => tryChange(attempts + 1), 300);
+      }
+    };
+    tryChange();
   };
 
   const navLinks = [
@@ -87,6 +97,20 @@ export default function Navbar() {
     { label: "How It Works", href: "/#how-it-works" },
     { label: "Contact", href: "/contact" },
   ];
+
+  const GlobeIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+
+  const ChevronIcon = () => (
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
 
   return (
     <nav
@@ -115,14 +139,7 @@ export default function Navbar() {
       >
         {/* Logo */}
         <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0, textDecoration: "none" }}>
-          <Image
-            src="/logo.svg"
-            alt="EliteBooking"
-            width={130}
-            height={40}
-            priority
-            style={{ width: "110px", height: "auto" }}
-          />
+          <Image src="/logo.svg" alt="EliteBooking" width={130} height={40} priority style={{ width: "110px", height: "auto" }} />
         </Link>
 
         {/* Desktop Nav Links */}
@@ -132,26 +149,15 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                style={{
-                  fontSize: "13px",
-                  color: pathname === link.href ? "#fff" : "rgba(255,255,255,0.6)",
-                  textDecoration: "none",
-                  fontWeight: pathname === link.href ? 600 : 400,
-                  transition: "color 0.2s ease",
-                }}
+                style={{ fontSize: "13px", color: pathname === link.href ? "#fff" : "rgba(255,255,255,0.6)", textDecoration: "none", fontWeight: pathname === link.href ? 600 : 400, transition: "color 0.2s ease" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color =
-                    pathname === link.href ? "#fff" : "rgba(255,255,255,0.6)")
-                }
+                onMouseLeave={(e) => (e.currentTarget.style.color = pathname === link.href ? "#fff" : "rgba(255,255,255,0.6)")}
               >
                 {link.label}
               </Link>
             ))}
             {session?.user?.role === "ADMIN" && (
-              <Link
-                href="/admin"
-                style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
+              <Link href="/admin" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
               >
@@ -166,7 +172,7 @@ export default function Navbar() {
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
 
             {/* Language Selector */}
-            <div id="lang-dropdown" style={{ position: "relative" }}>
+            <div ref={langRef} style={{ position: "relative" }}>
               <button
                 onClick={() => setLangOpen(!langOpen)}
                 style={{
@@ -175,26 +181,26 @@ export default function Navbar() {
                   gap: "6px",
                   fontSize: "12px",
                   fontWeight: 600,
-                  color: "rgba(255,255,255,0.6)",
+                  color: "rgba(255,255,255,0.7)",
                   background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  padding: "7px 12px",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  padding: "8px 14px",
                   borderRadius: "999px",
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#fff";
+                  e.currentTarget.style.border = "1px solid rgba(255,255,255,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(255,255,255,0.7)";
+                  e.currentTarget.style.border = "1px solid rgba(255,255,255,0.12)";
+                }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="2" y1="12" x2="22" y2="12" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                </svg>
+                <GlobeIcon />
                 {currentLang}
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+                <ChevronIcon />
               </button>
 
               {langOpen && (
@@ -202,16 +208,16 @@ export default function Navbar() {
                   style={{
                     position: "absolute",
                     right: 0,
-                    top: "calc(100% + 8px)",
-                    width: "180px",
+                    top: "calc(100% + 10px)",
+                    width: "200px",
                     background: "#111",
                     border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: "14px",
+                    borderRadius: "16px",
                     overflow: "hidden",
                     zIndex: 100,
-                    maxHeight: "280px",
+                    maxHeight: "300px",
                     overflowY: "auto",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
                   }}
                 >
                   {languages.map((lang) => (
@@ -221,13 +227,14 @@ export default function Navbar() {
                       style={{
                         width: "100%",
                         textAlign: "left",
-                        padding: "10px 16px",
+                        padding: "11px 18px",
                         fontSize: "13px",
                         color: "rgba(255,255,255,0.7)",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
                         transition: "all 0.15s ease",
+                        display: "block",
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = "rgba(255,255,255,0.08)";
@@ -248,17 +255,13 @@ export default function Navbar() {
             {/* Auth */}
             {session ? (
               <>
-                <Link
-                  href="/profile"
-                  style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none", transition: "color 0.2s ease" }}
+                <Link href="/profile" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   My Profile
                 </Link>
-                <Link
-                  href="/dashboard"
-                  style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none", transition: "color 0.2s ease" }}
+                <Link href="/dashboard" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
@@ -266,7 +269,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  style={{ fontSize: "13px", fontWeight: 700, color: "#000", background: "#fff", padding: "10px 22px", borderRadius: "999px", border: "none", cursor: "pointer", transition: "all 0.2s ease" }}
+                  style={{ fontSize: "13px", fontWeight: 700, color: "#000", background: "#fff", padding: "10px 22px", borderRadius: "999px", border: "none", cursor: "pointer" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.88)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
                 >
@@ -275,17 +278,13 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link
-                  href="/login"
-                  style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none", transition: "color 0.2s ease" }}
+                <Link href="/login" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   Sign In
                 </Link>
-                <Link
-                  href="/signup"
-                  style={{ fontSize: "13px", fontWeight: 700, color: "#000", background: "#fff", padding: "10px 22px", borderRadius: "999px", textDecoration: "none", transition: "all 0.2s ease" }}
+                <Link href="/signup" style={{ fontSize: "13px", fontWeight: 700, color: "#000", background: "#fff", padding: "10px 22px", borderRadius: "999px", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.88)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
                 >
@@ -316,12 +315,14 @@ export default function Navbar() {
           style={{
             overflow: "hidden",
             transition: "max-height 0.4s ease",
-            maxHeight: menuOpen ? "700px" : "0",
+            maxHeight: menuOpen ? "800px" : "0",
             background: "rgba(0,0,0,0.97)",
             backdropFilter: "blur(12px)",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "24px", padding: "24px 24px 32px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px", padding: "24px 24px 32px" }}>
+
+            {/* Nav Links */}
             {navLinks.map((link) => (
               <Link
                 key={link.label}
@@ -339,23 +340,73 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Mobile Language Selector */}
-            <div>
-              <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>Language</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {languages.slice(0, 10).map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => changeLanguage(lang.code, lang.label)}
-                    style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", padding: "6px 12px", borderRadius: "999px", cursor: "pointer" }}
-                  >
-                    {lang.label}
-                  </button>
-                ))}
-              </div>
+            {/* Mobile Language */}
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "20px" }}>
+              <button
+                onClick={() => setMobileLangOpen(!mobileLangOpen)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  color: "rgba(255,255,255,0.7)",
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  padding: "12px 18px",
+                  borderRadius: "999px",
+                  cursor: "pointer",
+                  width: "100%",
+                  justifyContent: "center",
+                }}
+              >
+                <GlobeIcon />
+                {currentLang} — Change Language
+                <ChevronIcon />
+              </button>
+
+              {mobileLangOpen && (
+                <div
+                  style={{
+                    marginTop: "12px",
+                    background: "#111",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    maxHeight: "220px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        changeLanguage(lang.code, lang.label);
+                        setMobileLangOpen(false);
+                        setMenuOpen(false);
+                      }}
+                      style={{
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "13px 18px",
+                        fontSize: "14px",
+                        color: "rgba(255,255,255,0.7)",
+                        background: "none",
+                        border: "none",
+                        borderBottom: "1px solid rgba(255,255,255,0.05)",
+                        cursor: "pointer",
+                        display: "block",
+                      }}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+            {/* Auth */}
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "20px", display: "flex", flexDirection: "column", gap: "16px" }}>
               {session ? (
                 <>
                   <Link href="/profile" onClick={() => setMenuOpen(false)} style={{ fontSize: "15px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>My Profile</Link>
@@ -376,6 +427,7 @@ export default function Navbar() {
                 </>
               )}
             </div>
+
           </div>
         </div>
       )}
