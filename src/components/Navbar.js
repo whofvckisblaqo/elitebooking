@@ -76,19 +76,20 @@ export default function Navbar() {
   }, []);
 
   const changeLanguage = (code, label) => {
-    const tryChange = (attempts = 0) => {
-      const select = document.querySelector(".goog-te-combo");
-      if (select) {
-        select.value = code;
-        select.dispatchEvent(new Event("change"));
-        setCurrentLang(code === "en" ? "EN" : label.substring(0, 3).toUpperCase());
-        setLangOpen(false);
-        setMobileLangOpen(false);
-      } else if (attempts < 10) {
-        setTimeout(() => tryChange(attempts + 1), 300);
+    if (code === "en") {
+      const cookies = document.cookie.split(";");
+      for (let cookie of cookies) {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
       }
-    };
-    tryChange();
+      window.location.reload();
+    } else {
+      window.location.href = `https://translate.google.com/translate?sl=en&tl=${code}&u=${encodeURIComponent(window.location.href)}`;
+    }
+    setCurrentLang(code === "en" ? "EN" : code.toUpperCase().substring(0, 2));
+    setLangOpen(false);
+    setMobileLangOpen(false);
   };
 
   const navLinks = [
@@ -157,7 +158,9 @@ export default function Navbar() {
               </Link>
             ))}
             {session?.user?.role === "ADMIN" && (
-              <Link href="/admin" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
+              <Link
+                href="/admin"
+                style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
               >
@@ -232,9 +235,10 @@ export default function Navbar() {
                         color: "rgba(255,255,255,0.7)",
                         background: "none",
                         border: "none",
+                        borderBottom: "1px solid rgba(255,255,255,0.05)",
                         cursor: "pointer",
-                        transition: "all 0.15s ease",
                         display: "block",
+                        transition: "all 0.15s ease",
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = "rgba(255,255,255,0.08)";
@@ -255,13 +259,17 @@ export default function Navbar() {
             {/* Auth */}
             {session ? (
               <>
-                <Link href="/profile" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
+                <Link
+                  href="/profile"
+                  style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   My Profile
                 </Link>
-                <Link href="/dashboard" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
+                <Link
+                  href="/dashboard"
+                  style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
@@ -278,13 +286,17 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/login" style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
+                <Link
+                  href="/login"
+                  style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
                 >
                   Sign In
                 </Link>
-                <Link href="/signup" style={{ fontSize: "13px", fontWeight: 700, color: "#000", background: "#fff", padding: "10px 22px", borderRadius: "999px", textDecoration: "none" }}
+                <Link
+                  href="/signup"
+                  style={{ fontSize: "13px", fontWeight: 700, color: "#000", background: "#fff", padding: "10px 22px", borderRadius: "999px", textDecoration: "none" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.88)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "#fff")}
                 >
@@ -315,7 +327,7 @@ export default function Navbar() {
           style={{
             overflow: "hidden",
             transition: "max-height 0.4s ease",
-            maxHeight: menuOpen ? "800px" : "0",
+            maxHeight: menuOpen ? "900px" : "0",
             background: "rgba(0,0,0,0.97)",
             backdropFilter: "blur(12px)",
           }}
@@ -347,17 +359,17 @@ export default function Navbar() {
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  justifyContent: "center",
                   gap: "8px",
                   fontSize: "14px",
                   fontWeight: 600,
                   color: "rgba(255,255,255,0.7)",
                   background: "rgba(255,255,255,0.06)",
                   border: "1px solid rgba(255,255,255,0.12)",
-                  padding: "12px 18px",
-                  borderRadius: "999px",
+                  padding: "14px 18px",
+                  borderRadius: "12px",
                   cursor: "pointer",
                   width: "100%",
-                  justifyContent: "center",
                 }}
               >
                 <GlobeIcon />
@@ -373,7 +385,7 @@ export default function Navbar() {
                     border: "1px solid rgba(255,255,255,0.1)",
                     borderRadius: "16px",
                     overflow: "hidden",
-                    maxHeight: "220px",
+                    maxHeight: "250px",
                     overflowY: "auto",
                   }}
                 >
@@ -388,7 +400,7 @@ export default function Navbar() {
                       style={{
                         width: "100%",
                         textAlign: "left",
-                        padding: "13px 18px",
+                        padding: "14px 18px",
                         fontSize: "14px",
                         color: "rgba(255,255,255,0.7)",
                         background: "none",
