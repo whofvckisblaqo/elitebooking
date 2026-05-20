@@ -75,18 +75,28 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const changeLanguage = (code, label) => {
-  if (code === "en") {
-    window.location.reload();
-  } else {
-    window.open(
-      `https://translate.google.com/translate?sl=en&tl=${code}&u=${encodeURIComponent(window.location.href)}`,
-      "_blank"
-    );
-  }
-  setCurrentLang(code === "en" ? "EN" : code.toUpperCase().substring(0, 2));
-  setLangOpen(false);
-  setMobileLangOpen(false);
+ const changeLanguage = (code, label) => {
+  const tryChange = (attempts = 0) => {
+    const select = document.querySelector("select.goog-te-combo");
+    if (select) {
+      select.value = code;
+      select.dispatchEvent(new Event("change"));
+      setCurrentLang(code === "en" ? "EN" : code.toUpperCase().substring(0, 2));
+      setLangOpen(false);
+      setMobileLangOpen(false);
+    } else if (attempts < 20) {
+      setTimeout(() => tryChange(attempts + 1), 500);
+    } else {
+      // Fallback — open in new tab
+      window.open(
+        `https://translate.google.com/translate?sl=en&tl=${code}&u=${encodeURIComponent(window.location.href)}`,
+        "_blank"
+      );
+      setLangOpen(false);
+      setMobileLangOpen(false);
+    }
+  };
+  tryChange();
 };
 
   const navLinks = [
