@@ -14,7 +14,7 @@ export async function POST(req) {
     // Send to admin
     await resend.emails.send({
       from: process.env.FROM_EMAIL || "EliteBooking <onboarding@resend.dev>",
-      to: process.env.SUPPORT_EMAIL || "elitebookingsuport@gmail.com",
+      to: process.env.SUPPORT_EMAIL || "elitebookingsuport@outlook.com",
       replyTo: email,
       subject: `[EliteBooking Contact] ${subject} — from ${name}`,
       html: `
@@ -43,7 +43,7 @@ export async function POST(req) {
     await resend.emails.send({
       from: process.env.FROM_EMAIL || "EliteBooking <onboarding@resend.dev>",
       to: email,
-      replyTo: process.env.SUPPORT_EMAIL || "elitebookingsuport@gmail.com",
+      replyTo: process.env.SUPPORT_EMAIL || "elitebookingsuport@outlook.com",
       subject: "We received your message — EliteBooking",
       html: `
         <div style="font-family:Inter,sans-serif;max-width:600px;margin:0 auto;background:#000;color:#fff;padding:48px 32px;border-radius:16px;">

@@ -84,8 +84,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p style={{ fontSize: "11px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "4px" }}>Email Us</p>
-                  <a href="mailto:elitebookingsuport@gmail.com" style={{ fontSize: "14px", fontWeight: 700, color: "#000", textDecoration: "none" }}>
-                    elitebookingsuport@gmail.com
+                  <a href="mailto:elitebookingsuport@outlook.com" style={{ fontSize: "14px", fontWeight: 700, color: "#000", textDecoration: "none" }}>
+                    elitebookingsuport@outlook.com
                   </a>
                 </div>
               </div>

@@ -67,7 +67,7 @@ export default function TermsPage() {
             },
             {
               title: "10. Contact Us",
-              content: `If you have any questions about these Terms of Service, please contact us at elitebookingsuport@gmail.com or visit our Contact page.`,
+              content: `If you have any questions about these Terms of Service, please contact us at elitebookingsuport@outlook.com or visit our Contact page.`,
             },
           ].map((section) => (
             <div key={section.title}>

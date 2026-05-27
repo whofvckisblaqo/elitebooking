@@ -51,7 +51,7 @@ export default function PrivacyPage() {
             },
             {
               title: "6. Your Rights",
-              content: `You have the right to access, correct, or delete your personal information at any time. You may also request a copy of the data we hold about you. To exercise these rights, please contact us at elitebookingsuport@gmail.com. We will respond to your request within 30 days.`,
+              content: `You have the right to access, correct, or delete your personal information at any time. You may also request a copy of the data we hold about you. To exercise these rights, please contact us at elitebookingsuport@outlook.com. We will respond to your request within 30 days.`,
             },
             {
               title: "7. Children's Privacy",
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
             },
             {
               title: "10. Contact Us",
-              content: `If you have any questions about this Privacy Policy or how we handle your personal information, please contact us at elitebookingsuport@gmail.com or visit our Contact page.`,
+              content: `If you have any questions about this Privacy Policy or how we handle your personal information, please contact us at elitebookingsuport@outlook.com or visit our Contact page.`,
             },
           ].map((section) => (
             <div key={section.title}>
