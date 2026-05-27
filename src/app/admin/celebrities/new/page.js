@@ -79,6 +79,8 @@ export default function AddCelebrityPage() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [newSpecialName, setNewSpecialName] = useState("");
+  const [newSpecialFee, setNewSpecialFee] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -113,6 +115,28 @@ export default function AddCelebrityPage() {
       ...prev,
       packageFees: { ...prev.packageFees, [pkg]: value },
     }));
+  };
+
+  const specialBookings = form.packages.filter((p) => !bookingPackages.includes(p));
+
+  const addSpecialBooking = () => {
+    const name = newSpecialName.trim();
+    if (!name || form.packages.includes(name)) return;
+    setForm((prev) => ({
+      ...prev,
+      packages: [...prev.packages, name],
+      packageFees: newSpecialFee ? { ...prev.packageFees, [name]: newSpecialFee } : prev.packageFees,
+    }));
+    setNewSpecialName("");
+    setNewSpecialFee("");
+  };
+
+  const removeSpecialBooking = (name) => {
+    setForm((prev) => {
+      const newFees = { ...prev.packageFees };
+      delete newFees[name];
+      return { ...prev, packages: prev.packages.filter((p) => p !== name), packageFees: newFees };
+    });
   };
 
   const toggleLanguage = (lang) => {
@@ -540,6 +564,81 @@ export default function AddCelebrityPage() {
                 {form.packages.length} package{form.packages.length > 1 ? "s" : ""} selected
               </p>
             )}
+          </div>
+
+          {/* ── SPECIAL BOOKINGS ── */}
+          <div style={cardStyle}>
+            <h2 style={sectionTitle}>Special Bookings</h2>
+            <p style={{ fontSize: "13px", color: "#999", marginBottom: "20px" }}>
+              Create custom booking options unique to this celebrity — e.g. "Luxury Yacht Party", "Private Jet Experience".
+            </p>
+
+            {/* Existing special bookings */}
+            {specialBookings.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "20px" }}>
+                {specialBookings.map((pkg) => (
+                  <div key={pkg} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px 18px", borderRadius: "12px", border: "1px solid #000", background: "#000", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: "14px", fontWeight: 600, color: "#fff", flex: 1 }}>{pkg}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                      <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>$</span>
+                      <input
+                        type="number"
+                        placeholder="Fee"
+                        min="0"
+                        value={form.packageFees[pkg] || ""}
+                        onChange={(e) => handlePackageFee(pkg, e.target.value)}
+                        style={{ width: "110px", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "8px", padding: "8px 12px", fontSize: "13px", color: "#fff", outline: "none" }}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeSpecialBooking(pkg)}
+                      style={{ background: "rgba(255,59,48,0.2)", border: "none", borderRadius: "8px", padding: "6px 12px", fontSize: "12px", color: "#ff6b6b", cursor: "pointer", fontWeight: 600, flexShrink: 0 }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Add new special booking */}
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "flex-end" }}>
+              <div style={{ flex: 2, minWidth: "180px" }}>
+                <label style={labelStyle}>Booking Name</label>
+                <input
+                  type="text"
+                  value={newSpecialName}
+                  onChange={(e) => setNewSpecialName(e.target.value)}
+                  placeholder="e.g. Luxury Yacht Party"
+                  style={inputStyle}
+                  onFocus={(e) => (e.target.style.border = "1px solid #000")}
+                  onBlur={(e) => (e.target.style.border = "1px solid #eee")}
+                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSpecialBooking())}
+                />
+              </div>
+              <div style={{ flex: 1, minWidth: "120px" }}>
+                <label style={labelStyle}>Fee (USD)</label>
+                <input
+                  type="number"
+                  value={newSpecialFee}
+                  onChange={(e) => setNewSpecialFee(e.target.value)}
+                  placeholder="e.g. 75000"
+                  min="0"
+                  style={inputStyle}
+                  onFocus={(e) => (e.target.style.border = "1px solid #000")}
+                  onBlur={(e) => (e.target.style.border = "1px solid #eee")}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={addSpecialBooking}
+                disabled={!newSpecialName.trim()}
+                style={{ background: newSpecialName.trim() ? "#000" : "#ccc", color: "#fff", border: "none", borderRadius: "10px", padding: "14px 20px", fontSize: "14px", fontWeight: 700, cursor: newSpecialName.trim() ? "pointer" : "not-allowed", flexShrink: 0 }}
+              >
+                + Add
+              </button>
+            </div>
           </div>
 
           {/* ── LANGUAGES ── */}
