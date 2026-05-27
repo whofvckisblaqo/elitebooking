@@ -6,6 +6,19 @@ import Image from "next/image";
 import Link from "next/link";
 import RelatedCelebrities from "@/components/RelatedCelebrities";
 
+const standardPackages = [
+  "Meet & Greet", "VIP Meet & Greet", "Private Concert", "Public Concert",
+  "Corporate Event", "Wedding Appearance", "Birthday Appearance",
+  "Brand Ambassador", "Product Launch", "Social Media Shoutout",
+  "Video Message", "Live Stream Appearance", "Charity Event", "Award Show",
+  "Speaking Engagement", "Panel Discussion", "Autograph Session",
+  "Photo Session", "Membership Card", "Fan Experience Package",
+  "Backstage Pass", "Private Dinner", "Sports Clinic", "Masterclass",
+  "Podcast/Interview", "Film/TV Appearance", "Music Collaboration",
+  "Festival Performance", "Private Party", "Club Appearance",
+  "Golf Outing", "lunch/Dinner Date",
+];
+
 export default function CelebrityProfilePage() {
   const { slug } = useParams();
   const router = useRouter();
@@ -253,31 +266,54 @@ export default function CelebrityProfilePage() {
                   <div style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
                     <p style={{ fontSize: "16px", color: "#999" }}>No packages listed yet.</p>
                   </div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {celebrity.packages.map((pkg) => {
-                      const fee = getPackageFee(pkg);
-                      const isSelected = selectedPackage === pkg;
-                      return (
-                        <div
-                          key={pkg}
-                          onClick={() => setSelectedPackage(pkg)}
-                          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", background: isSelected ? "#000" : "#f9f9f9", border: `1px solid ${isSelected ? "#000" : "#eee"}`, borderRadius: "12px", cursor: "pointer", transition: "all 0.2s ease", gap: "12px" }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                            <div style={{ width: "20px", height: "20px", borderRadius: "50%", border: isSelected ? "none" : "2px solid #ddd", background: isSelected ? "#fff" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "11px", fontWeight: 700, color: "#000" }}>
-                              {isSelected ? "✓" : ""}
-                            </div>
-                            <span style={{ fontSize: "14px", fontWeight: 600, color: isSelected ? "#fff" : "#000" }}>{pkg}</span>
+                ) : (() => {
+                  const standard = celebrity.packages.filter((p) => standardPackages.includes(p));
+                  const special = celebrity.packages.filter((p) => !standardPackages.includes(p));
+                  const PackageRow = ({ pkg }) => {
+                    const fee = getPackageFee(pkg);
+                    const isSelected = selectedPackage === pkg;
+                    return (
+                      <div
+                        onClick={() => setSelectedPackage(pkg)}
+                        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 22px", background: isSelected ? "#000" : "#f9f9f9", border: `1px solid ${isSelected ? "#000" : "#eee"}`, borderRadius: "12px", cursor: "pointer", transition: "all 0.2s ease", gap: "12px" }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "20px", height: "20px", borderRadius: "50%", border: isSelected ? "none" : "2px solid #ddd", background: isSelected ? "#fff" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "11px", fontWeight: 700, color: "#000" }}>
+                            {isSelected ? "✓" : ""}
                           </div>
-                          <span style={{ fontSize: "14px", fontWeight: 800, color: isSelected ? "#fff" : "#000", flexShrink: 0 }}>
-                            {fee || `$${celebrity.fee.toLocaleString()}`}
-                          </span>
+                          <span style={{ fontSize: "14px", fontWeight: 600, color: isSelected ? "#fff" : "#000" }}>{pkg}</span>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
+                        <span style={{ fontSize: "14px", fontWeight: 800, color: isSelected ? "#fff" : "#000", flexShrink: 0 }}>
+                          {fee || `$${celebrity.fee.toLocaleString()}`}
+                        </span>
+                      </div>
+                    );
+                  };
+                  return (
+                    <div>
+                      {standard.length > 0 && (
+                        <div style={{ marginBottom: special.length > 0 ? "28px" : "0" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                            {standard.map((pkg) => <PackageRow key={pkg} pkg={pkg} />)}
+                          </div>
+                        </div>
+                      )}
+                      {special.length > 0 && (
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+                            <span style={{ fontSize: "12px", fontWeight: 700, color: "#fff", background: "#000", padding: "4px 12px", borderRadius: "999px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                              Special Bookings
+                            </span>
+                            <div style={{ flex: 1, height: "1px", background: "#eee" }} />
+                          </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                            {special.map((pkg) => <PackageRow key={pkg} pkg={pkg} />)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             )}
           </div>
@@ -332,14 +368,34 @@ export default function CelebrityProfilePage() {
                         style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "14px 16px", fontSize: "14px", color: "#fff", outline: "none", cursor: "pointer" }}
                       >
                         <option value="">Choose a package...</option>
-                        {celebrity.packages?.map((pkg) => {
-                          const fee = getPackageFee(pkg);
+                        {(() => {
+                          const standard = celebrity.packages?.filter((p) => standardPackages.includes(p)) || [];
+                          const special = celebrity.packages?.filter((p) => !standardPackages.includes(p)) || [];
                           return (
-                            <option key={pkg} value={pkg} style={{ background: "#111" }}>
-                              {pkg}{fee ? ` — ${fee}` : ""}
-                            </option>
+                            <>
+                              {standard.map((pkg) => {
+                                const fee = getPackageFee(pkg);
+                                return (
+                                  <option key={pkg} value={pkg} style={{ background: "#111" }}>
+                                    {pkg}{fee ? ` — ${fee}` : ""}
+                                  </option>
+                                );
+                              })}
+                              {special.length > 0 && (
+                                <optgroup label="— Special Bookings —" style={{ background: "#111", color: "rgba(255,255,255,0.5)" }}>
+                                  {special.map((pkg) => {
+                                    const fee = getPackageFee(pkg);
+                                    return (
+                                      <option key={pkg} value={pkg} style={{ background: "#111" }}>
+                                        {pkg}{fee ? ` — ${fee}` : ""}
+                                      </option>
+                                    );
+                                  })}
+                                </optgroup>
+                              )}
+                            </>
                           );
-                        })}
+                        })()}
                       </select>
                     </div>
 
