@@ -126,6 +126,7 @@ export default function AdminDashboard() {
             { label: "Manage Celebrities", desc: "Add, edit or remove celebrities", href: "/admin/celebrities", icon: "🌟" },
             { label: "Manage Bookings", desc: "Approve or reject booking requests", href: "/admin/bookings", icon: "📋" },
             { label: "Manage Users", desc: "View all registered users", href: "/admin/users", icon: "👥" },
+            { label: "Send Email", desc: "Email users or approved clients", href: "/admin/email", icon: "✉️" },
           ].map((action) => (
             <Link key={action.label} href={action.href} style={{ textDecoration: "none" }}>
               <div
