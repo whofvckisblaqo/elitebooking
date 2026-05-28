@@ -19,12 +19,34 @@ export default function AdminEmailPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [tab, setTab] = useState("compose");
+  const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [expandedLog, setExpandedLog] = useState(null);
 
   useEffect(() => {
     if (session?.user?.role === "ADMIN" && recipients === "specific" && allUsers.length === 0) {
       fetchUsers();
     }
   }, [recipients, session]);
+
+  useEffect(() => {
+    if (session?.user?.role === "ADMIN" && tab === "inbox") {
+      fetchLogs();
+    }
+  }, [tab, session]);
+
+  const fetchLogs = async () => {
+    setLogsLoading(true);
+    try {
+      const res = await fetch("/api/admin/email");
+      const data = await res.json();
+      setLogs(data.logs || []);
+    } catch {
+      // silently fail
+    } finally {
+      setLogsLoading(false);
+    }
+  };
 
   const fetchUsers = async () => {
     setFetchingUsers(true);
@@ -85,6 +107,7 @@ export default function AdminEmailPage() {
         setSubject("");
         setMessage("");
         setSelectedUsers([]);
+        fetchLogs();
       }
     } catch {
       setError("Something went wrong. Please try again.");
@@ -120,13 +143,17 @@ export default function AdminEmailPage() {
 
         {/* Tabs */}
         <div style={{ display: "flex", borderBottom: "1px solid #eee", marginBottom: "32px" }}>
-          {["compose", "preview"].map((t) => (
+          {[
+            { key: "compose", label: "Compose" },
+            { key: "preview", label: "Preview Email" },
+            { key: "inbox", label: `Sent Emails${logs.length > 0 ? ` (${logs.length})` : ""}` },
+          ].map((t) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              style={{ padding: "12px 20px", fontSize: "14px", fontWeight: 600, cursor: "pointer", border: "none", background: "none", color: tab === t ? "#000" : "#999", borderBottom: tab === t ? "2px solid #000" : "2px solid transparent", marginBottom: "-1px", textTransform: "capitalize" }}
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              style={{ padding: "12px 20px", fontSize: "14px", fontWeight: 600, cursor: "pointer", border: "none", background: "none", color: tab === t.key ? "#000" : "#999", borderBottom: tab === t.key ? "2px solid #000" : "2px solid transparent", marginBottom: "-1px", whiteSpace: "nowrap" }}
             >
-              {t === "compose" ? "Compose" : "Preview Email"}
+              {t.label}
             </button>
           ))}
         </div>
@@ -274,6 +301,102 @@ export default function AdminEmailPage() {
               </button>
             </div>
           </>
+        )}
+
+        {tab === "inbox" && (
+          <div>
+            {logsLoading ? (
+              <div style={{ textAlign: "center", padding: "64px", color: "#999" }}>
+                <div style={{ width: "32px", height: "32px", borderRadius: "50%", border: "2px solid #eee", borderTop: "2px solid #000", animation: "spin 0.8s linear infinite", margin: "0 auto 16px" }} />
+                <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+                <p style={{ fontSize: "14px" }}>Loading sent emails...</p>
+              </div>
+            ) : logs.length === 0 ? (
+              <div style={{ ...cardStyle, textAlign: "center", padding: "64px 32px" }}>
+                <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "24px" }}>✉️</div>
+                <p style={{ fontSize: "16px", fontWeight: 700, color: "#000", marginBottom: "8px" }}>No emails sent yet</p>
+                <p style={{ fontSize: "14px", color: "#999" }}>Emails you send to users will appear here.</p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {logs.map((log) => {
+                  const isExpanded = expandedLog === log._id;
+                  const recipientLabel = log.recipients === "all" ? "All Users" : log.recipients === "approved" ? "Approved Clients" : "Specific Users";
+                  const date = new Date(log.createdAt);
+                  const dateStr = date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+                  const timeStr = date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+                  return (
+                    <div
+                      key={log._id}
+                      style={{ background: "#fff", border: "1px solid #eee", borderRadius: "16px", overflow: "hidden", transition: "border 0.2s ease" }}
+                    >
+                      {/* Row */}
+                      <div
+                        onClick={() => setExpandedLog(isExpanded ? null : log._id)}
+                        style={{ padding: "20px 24px", display: "flex", alignItems: "center", gap: "16px", cursor: "pointer", flexWrap: "wrap" }}
+                      >
+                        <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0 }}>
+                          ✉️
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: "15px", fontWeight: 700, color: "#000", margin: "0 0 4px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {log.subject}
+                          </p>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                            <span style={{ fontSize: "12px", color: "#999" }}>To: {recipientLabel}</span>
+                            <span style={{ fontSize: "12px", color: "#ccc" }}>·</span>
+                            <span style={{ fontSize: "12px", color: "#999" }}>Sent by {log.sentBy}</span>
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px", flexShrink: 0 }}>
+                          <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                            <span style={{ fontSize: "12px", fontWeight: 700, color: "#22c55e", background: "rgba(34,197,94,0.1)", padding: "3px 10px", borderRadius: "999px" }}>
+                              {log.sentCount} sent
+                            </span>
+                            {log.failedCount > 0 && (
+                              <span style={{ fontSize: "12px", fontWeight: 700, color: "#ff6b6b", background: "rgba(255,59,48,0.1)", padding: "3px 10px", borderRadius: "999px" }}>
+                                {log.failedCount} failed
+                              </span>
+                            )}
+                          </div>
+                          <p style={{ fontSize: "11px", color: "#bbb", margin: 0 }}>{dateStr} · {timeStr}</p>
+                        </div>
+                        <svg
+                          width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#ccc"
+                          style={{ transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease", flexShrink: 0 }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+
+                      {/* Expanded message */}
+                      {isExpanded && (
+                        <div style={{ borderTop: "1px solid #f0f0f0", padding: "24px 24px 24px" }}>
+                          <div style={{ display: "flex", gap: "12px", marginBottom: "16px", flexWrap: "wrap" }}>
+                            {[
+                              { label: "Recipients", value: recipientLabel },
+                              { label: "Total", value: `${log.recipientCount} users` },
+                              { label: "Delivered", value: `${log.sentCount}` },
+                              ...(log.failedCount > 0 ? [{ label: "Failed", value: `${log.failedCount}` }] : []),
+                            ].map((item) => (
+                              <div key={item.label} style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "10px", padding: "10px 16px" }}>
+                                <p style={{ fontSize: "10px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 2px" }}>{item.label}</p>
+                                <p style={{ fontSize: "14px", fontWeight: 700, color: "#000", margin: 0 }}>{item.value}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <div style={{ background: "#f9f9f9", border: "1px solid #eee", borderRadius: "12px", padding: "20px" }}>
+                            <p style={{ fontSize: "11px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 10px" }}>Message Body</p>
+                            <p style={{ fontSize: "14px", color: "#333", lineHeight: 1.8, margin: 0, whiteSpace: "pre-wrap" }}>{log.message}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
 
         {tab === "preview" && (
